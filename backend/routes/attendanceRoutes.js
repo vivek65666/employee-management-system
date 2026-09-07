@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import { authenticateUser } from '../middleware/authMiddleware.js';
+import { createAttendance, getAttendance, listAttendance, updateAttendance } from '../controllers/attendanceController.js';
+const router = Router();
+router.use(authenticateUser);
+router.get('/', listAttendance);
+router.get('/:id', getAttendance);
+router.post('/', createAttendance);
+router.put('/:id', updateAttendance);
+export default router;

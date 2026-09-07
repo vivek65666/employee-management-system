@@ -1,0 +1,12 @@
+import { Router } from 'express';
+import { authenticateUser } from '../middleware/authMiddleware.js';
+import { authorizeRoles } from '../middleware/roleMiddleware.js';
+import { createDepartment, deleteDepartment, getDepartment, listDepartments, updateDepartment } from '../controllers/departmentController.js';
+const router = Router();
+router.use(authenticateUser);
+router.get('/', listDepartments);
+router.get('/:id', getDepartment);
+router.post('/', authorizeRoles('admin'), createDepartment);
+router.put('/:id', authorizeRoles('admin'), updateDepartment);
+router.delete('/:id', authorizeRoles('admin'), deleteDepartment);
+export default router;

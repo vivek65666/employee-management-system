@@ -1,0 +1,33 @@
+import 'express-async-errors';
+import dotenv from 'dotenv';
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import { connectDB } from './config/db.js';
+import authRoutes from './routes/authRoutes.js';
+import employeeRoutes from './routes/employeeRoutes.js';
+import departmentRoutes from './routes/departmentRoutes.js';
+import attendanceRoutes from './routes/attendanceRoutes.js';
+
+dotenv.config();
+const app = express();
+app.use(helmet());
+app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173' }));
+app.use(express.json({ limit: '1mb' }));
+app.use(morgan('dev'));
+app.get('/api/health', (req, res) => res.json({ success: true, message: 'API is healthy' }));
+app.use('/api/auth', authRoutes);
+app.use('/api/employees', employeeRoutes);
+app.use('/api/departments', departmentRoutes);
+app.use('/api/attendance', attendanceRoutes);
+app.use((req, res) => res.status(404).json({ success: false, message: 'Route not found' }));
+app.use((error, req, res, next) => {
+  console.error(error);
+  if (error.code === 11000) return res.status(409).json({ success: false, message: 'A record with that value already exists' });
+  if (error.name === 'ValidationError') return res.status(400).json({ success: false, message: 'Validation failed', errors: Object.values(error.errors).map((item) => item.message) });
+  res.status(500).json({ success: false, message: 'An unexpected server error occurred' });
+});
+const port = process.env.PORT || 5000;
+if (process.env.NODE_ENV !== 'test') connectDB().then(() => app.listen(port, () => console.log(`API listening on ${port}`))).catch((error) => { console.error('Unable to start server:', error.message); process.exit(1); });
+export default app;

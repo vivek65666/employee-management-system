@@ -1,0 +1,14 @@
+import { Router } from 'express';
+import { authenticateUser } from '../middleware/authMiddleware.js';
+import { authorizeRoles } from '../middleware/roleMiddleware.js';
+import { createEmployee, dashboard, deleteEmployee, getEmployee, getMyProfile, listEmployees, updateEmployee } from '../controllers/employeeController.js';
+const router = Router();
+router.use(authenticateUser);
+router.get('/dashboard', dashboard);
+router.get('/me/profile', getMyProfile);
+router.get('/', authorizeRoles('admin'), listEmployees);
+router.get('/:id', getEmployee);
+router.post('/', authorizeRoles('admin'), createEmployee);
+router.put('/:id', authorizeRoles('admin'), updateEmployee);
+router.delete('/:id', authorizeRoles('admin'), deleteEmployee);
+export default router;
