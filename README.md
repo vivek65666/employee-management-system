@@ -577,7 +577,6 @@ Example:
 
 ![Employee Dashboard](screenshots/employee-dashboard.png)
 ```
-
 ---
 
 ## 📂 Project Highlights
