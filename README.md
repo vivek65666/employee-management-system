@@ -562,7 +562,7 @@ Suggested screenshots:
 
 Example:
 
-```markdown
+  markdown
 ## Screenshots
 
 ### Login
